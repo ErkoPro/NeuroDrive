@@ -9,6 +9,7 @@ import { TripCard } from '../components/TripCard';
 import { DemoBadge } from '../components/DemoBadge';
 import { FadeInView } from '../components/animations/FadeInView';
 import { RootStackParamList } from '../navigation/types';
+import { colors } from '../theme/colors';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
