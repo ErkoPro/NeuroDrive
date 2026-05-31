@@ -20,6 +20,9 @@ function TabLabel({ label, focused }: { label: string; focused: boolean }) {
   if (!focused) {
     return <Text style={styles.labelInactive}>{label}</Text>;
   }
+  if (Platform.OS === 'web') {
+    return <Text style={styles.labelActiveWeb}>{label}</Text>;
+  }
   return (
     <MaskedView maskElement={<Text style={styles.labelActive}>{label}</Text>}>
       <LinearGradient colors={[...gradients.accent]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
@@ -111,5 +114,10 @@ const styles = StyleSheet.create({
   labelActive: {
     fontSize: 11,
     fontFamily: fontFamily.semiBold,
+  },
+  labelActiveWeb: {
+    fontSize: 11,
+    fontFamily: fontFamily.semiBold,
+    color: colors.accentCyan,
   },
 });

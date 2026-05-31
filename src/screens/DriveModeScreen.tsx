@@ -106,7 +106,7 @@ export function DriveModeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: 'transparent' },
+  safe: { flex: 1, backgroundColor: colors.bgPrimary },
   scroll: { flex: 1 },
   content: { padding: 20, paddingBottom: 32 },
   startContainer: { flex: 1, padding: 20 },

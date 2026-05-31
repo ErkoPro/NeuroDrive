@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
@@ -36,7 +37,10 @@ function MainTabs() {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: styles.scene,
+      }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Drive" component={DriveModeScreen} />
@@ -56,7 +60,7 @@ export function AppNavigator() {
             headerStyle: { backgroundColor: colors.bgSecondary },
             headerTintColor: colors.textPrimary,
             headerTitleStyle: { fontFamily: fontFamily.bold, fontWeight: '700' },
-            contentStyle: { backgroundColor: colors.bgPrimary },
+            contentStyle: styles.stackContent,
             animation: 'fade',
           }}
         >
@@ -68,3 +72,21 @@ export function AppNavigator() {
     </AppShell>
   );
 }
+
+const styles = StyleSheet.create({
+  scene: {
+    flex: 1,
+    backgroundColor: colors.bgPrimary,
+  },
+  stackContent: {
+    flex: 1,
+    backgroundColor: colors.bgPrimary,
+  },
+  navRoot: {
+    flex: 1,
+    height: '100%',
+    ...Platform.select({
+      web: { minHeight: '100vh' } as object,
+    }),
+  },
+});

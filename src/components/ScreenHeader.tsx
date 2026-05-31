@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, gradients } from '../theme/colors';
@@ -12,6 +12,11 @@ interface GradientTextProps {
 }
 
 function GradientTextComponent({ children, style, size = 28 }: GradientTextProps) {
+  if (Platform.OS === 'web') {
+    return (
+      <Text style={[styles.text, styles.webGradient, { fontSize: size }, style]}>{children}</Text>
+    );
+  }
   return (
     <MaskedView
       maskElement={
@@ -56,6 +61,9 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.bold,
     fontWeight: '700',
     letterSpacing: -0.5,
+  },
+  webGradient: {
+    color: colors.accentCyan,
   },
   title: {
     color: colors.textPrimary,

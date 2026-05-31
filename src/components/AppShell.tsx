@@ -21,16 +21,20 @@ export const AppShell = memo(AppShellComponent);
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     backgroundColor: colors.bgPrimary,
     ...Platform.select({
       web: {
-        width: '100%',
         maxWidth: 480,
         alignSelf: 'center',
+        minHeight: '100vh',
       } as object,
     }),
   },
   content: {
     flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });

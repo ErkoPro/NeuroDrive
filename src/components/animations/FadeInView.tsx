@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ViewStyle } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -23,6 +23,11 @@ export function FadeInView({
   style,
   slideUp = 16,
 }: FadeInViewProps) {
+  // Reanimated opacity animations often fail silently on web production builds
+  if (Platform.OS === 'web') {
+    return <View style={style}>{children}</View>;
+  }
+
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(slideUp);
 
