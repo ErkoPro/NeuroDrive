@@ -7,9 +7,10 @@ interface DeviceStatusRowProps {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
   connected: boolean;
+  connectedLabel?: string;
 }
 
-export function DeviceStatusRow({ icon, label, connected }: DeviceStatusRowProps) {
+export function DeviceStatusRow({ icon, label, connected, connectedLabel = 'Подключено' }: DeviceStatusRowProps) {
   return (
     <View style={styles.row}>
       <View style={styles.left}>
@@ -25,7 +26,7 @@ export function DeviceStatusRow({ icon, label, connected }: DeviceStatusRowProps
           color={connected ? colors.safe : colors.danger}
         />
         <Text style={[styles.status, { color: connected ? colors.safe : colors.danger }]}>
-          {connected ? 'Подключено' : 'Отключено'}
+          {connected ? connectedLabel : 'Отключено'}
         </Text>
       </View>
     </View>

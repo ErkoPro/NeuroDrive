@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { colors, getScoreColor, getScoreLabel } from '../theme/colors';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface SafetyScoreRingProps {
   score: number;
@@ -13,8 +21,19 @@ export function SafetyScoreRing({ score, size = 220, label = 'NeuroScore' }: Saf
   const strokeWidth = 14;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = (score / 100) * circumference;
   const scoreColor = getScoreColor(score);
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    progress.value = withTiming(score / 100, {
+      duration: 1400,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [score, progress]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: circumference * (1 - progress.value),
+  }));
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -33,17 +52,18 @@ export function SafetyScoreRing({ score, size = 220, label = 'NeuroScore' }: Saf
           strokeWidth={strokeWidth}
           fill="none"
         />
-        <Circle
+        <AnimatedCircle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           stroke="url(#scoreGrad)"
           strokeWidth={strokeWidth}
           fill="none"
-          strokeDasharray={`${progress} ${circumference}`}
+          strokeDasharray={circumference}
           strokeLinecap="round"
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
+          animatedProps={animatedProps}
         />
       </Svg>
       <View style={styles.center}>
