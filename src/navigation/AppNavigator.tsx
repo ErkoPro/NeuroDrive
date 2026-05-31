@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { DriveModeScreen } from '../screens/DriveModeScreen';
@@ -11,13 +11,12 @@ import { ProfileScreen } from '../screens/ProfileScreen';
 import { TripReportScreen } from '../screens/TripReportScreen';
 import { DevicesScreen } from '../screens/DevicesScreen';
 import { CustomTabBar } from './CustomTabBar';
-import { AppShell } from '../components/AppShell';
 import { colors } from '../theme/colors';
 import { fontFamily } from '../theme/typography';
 import { MainTabParamList, RootStackParamList } from './types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const navTheme = {
   ...DefaultTheme,
@@ -53,40 +52,42 @@ function MainTabs() {
 
 export function AppNavigator() {
   return (
-    <AppShell>
+    <View style={styles.navRoot}>
       <NavigationContainer theme={navTheme}>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: colors.bgSecondary },
-            headerTintColor: colors.textPrimary,
-            headerTitleStyle: { fontFamily: fontFamily.bold, fontWeight: '700' },
-            contentStyle: styles.stackContent,
-            animation: 'fade',
-          }}
-        >
-          <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="TripReport" component={TripReportScreen} options={{ title: 'Отчёт о поездке' }} />
-          <Stack.Screen name="Devices" component={DevicesScreen} options={{ title: 'NeuroDrive Ecosystem' }} />
-        </Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.bgSecondary },
+          headerTintColor: colors.textPrimary,
+          headerTitleStyle: { fontFamily: fontFamily.bold, fontWeight: '700' },
+          cardStyle: styles.stackContent,
+        }}
+      >
+        <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="TripReport" component={TripReportScreen} options={{ title: 'Отчёт о поездке' }} />
+        <Stack.Screen name="Devices" component={DevicesScreen} options={{ title: 'NeuroDrive Ecosystem' }} />
+      </Stack.Navigator>
       </NavigationContainer>
-    </AppShell>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  navRoot: {
+    flex: 1,
+    width: '100%',
+    ...Platform.select({
+      web: { minHeight: '100vh', display: 'flex', flexDirection: 'column' } as object,
+    }),
+  },
   scene: {
     flex: 1,
     backgroundColor: colors.bgPrimary,
+    ...Platform.select({
+      web: { minHeight: 0 } as object,
+    }),
   },
   stackContent: {
     flex: 1,
     backgroundColor: colors.bgPrimary,
-  },
-  navRoot: {
-    flex: 1,
-    height: '100%',
-    ...Platform.select({
-      web: { minHeight: '100vh' } as object,
-    }),
   },
 });

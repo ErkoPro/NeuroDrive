@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { enableScreens } from 'react-native-screens';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { NeuroDriveProvider } from './src/context/NeuroDriveContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { WebGlobalStyles } from './src/components/WebGlobalStyles';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { colors } from './src/theme/colors';
+
+if (Platform.OS === 'web') {
+  enableScreens(false);
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -22,7 +27,7 @@ export default function App() {
   if (!ready) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.accentBlue} />
+        <View style={styles.spinner} />
       </View>
     );
   }
@@ -46,10 +51,14 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
-    height: '100%',
     backgroundColor: colors.bgPrimary,
     ...Platform.select({
-      web: { minHeight: '100vh' } as object,
+      web: {
+        minHeight: '100vh',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+      } as object,
     }),
   },
   loading: {
@@ -59,6 +68,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...Platform.select({
       web: { minHeight: '100vh' } as object,
+    }),
+  },
+  spinner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: colors.accentBlue,
+    ...Platform.select({
+      web: {
+        borderTopColor: 'transparent',
+        animationKeyframes: {
+          spin: { from: { transform: [{ rotate: '0deg' }] }, to: { transform: [{ rotate: '360deg' }] } },
+        },
+        animationDuration: '0.8s',
+        animationIterationCount: 'infinite',
+      } as object,
     }),
   },
 });

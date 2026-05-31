@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, Phone, User, Cpu } from 'lucide-react-native';
 import { useNeuroDrive } from '../hooks/useNeuroDrive';
@@ -15,7 +15,7 @@ import { colors, gradients } from '../theme/colors';
 import { fontFamily, typography } from '../theme/typography';
 import { RootStackParamList } from '../navigation/types';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (

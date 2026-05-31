@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useNeuroDrive } from '../hooks/useNeuroDrive';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { TripCard } from '../components/TripCard';
@@ -10,7 +10,7 @@ import { DemoBadge } from '../components/DemoBadge';
 import { FadeInView } from '../components/animations/FadeInView';
 import { RootStackParamList } from '../navigation/types';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export function HistoryScreen() {
   const { tripHistory } = useNeuroDrive();
