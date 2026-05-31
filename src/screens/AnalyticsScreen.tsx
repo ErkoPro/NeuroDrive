@@ -1,19 +1,16 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Platform } from 'react-native';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Lightbulb } from 'lucide-react-native';
 import { useNeuroDrive } from '../hooks/useNeuroDrive';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { ScoreBadge } from '../components/ScoreBadge';
+import { TrendChart } from '../components/charts/TrendChart';
 import { GlassCard } from '../components/GlassCard';
 import { DemoBadge } from '../components/DemoBadge';
 import { FadeInView } from '../components/animations/FadeInView';
 import { colors } from '../theme/colors';
 import { fontFamily, typography } from '../theme/typography';
-
-const Chart = Platform.OS === 'web'
-  ? require('../components/charts/TrendChart.web').TrendChart
-  : require('../components/charts/TrendChart.native').TrendChart;
 
 export function AnalyticsScreen() {
   const { analytics } = useNeuroDrive();
@@ -43,7 +40,7 @@ export function AnalyticsScreen() {
         ].map((chart) => (
           <FadeInView key={chart.title} delay={chart.delay}>
             <GlassCard style={styles.chartCard}>
-              <Chart title={chart.title} data={chart.data} color={chart.color} unit={chart.unit ?? ''} />
+              <TrendChart title={chart.title} data={chart.data} color={chart.color} unit={chart.unit ?? ''} />
             </GlassCard>
           </FadeInView>
         ))}

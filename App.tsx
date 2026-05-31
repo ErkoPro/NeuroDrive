@@ -1,4 +1,3 @@
-import 'react-native-reanimated';
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +6,7 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import { NeuroDriveProvider } from './src/context/NeuroDriveContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { WebGlobalStyles } from './src/components/WebGlobalStyles';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { colors } from './src/theme/colors';
 
 export default function App() {
@@ -17,7 +17,9 @@ export default function App() {
     Inter_700Bold,
   });
 
-  if (!fontsLoaded) {
+  const ready = Platform.OS === 'web' || fontsLoaded;
+
+  if (!ready) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color={colors.accentBlue} />
@@ -26,15 +28,17 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.root}>
-      <NeuroDriveProvider>
-        <WebGlobalStyles />
-        <StatusBar style="light" />
-        <View style={styles.root}>
-          <AppNavigator />
-        </View>
-      </NeuroDriveProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <NeuroDriveProvider>
+          <WebGlobalStyles />
+          <StatusBar style="light" />
+          <View style={styles.root}>
+            <AppNavigator />
+          </View>
+        </NeuroDriveProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 

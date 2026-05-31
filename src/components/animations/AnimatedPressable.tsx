@@ -1,38 +1,30 @@
 import React from 'react';
-import { Pressable, StyleSheet, ViewStyle } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import { View, StyleSheet, Platform, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, gradients } from '../theme/colors';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-interface AnimatedPressableProps {
+interface ScalePressableProps {
   children: React.ReactNode;
   onPress: () => void;
-  style?: ViewStyle;
+  style?: object;
 }
 
-export function ScalePressable({ children, onPress, style }: AnimatedPressableProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
+export function ScalePressable({ children, onPress, style }: ScalePressableProps) {
   return (
-    <AnimatedPressable
+    <Pressable
       onPress={onPress}
-      onPressIn={() => {
-        scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
-      }}
-      onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-      }}
-      style={[animatedStyle, style]}
+      style={({ pressed }) => [style, pressed && { opacity: 0.92, transform: [{ scale: 0.97 }] }]}
     >
       {children}
-    </AnimatedPressable>
+    </Pressable>
   );
+}
+
+interface PulseViewProps {
+  children: React.ReactNode;
+  style?: object;
+}
+
+export function PulseView({ children, style }: PulseViewProps) {
+  return <View style={style}>{children}</View>;
 }

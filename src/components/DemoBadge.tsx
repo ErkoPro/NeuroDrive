@@ -1,26 +1,13 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Cpu } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { colors } from '../theme/colors';
 import { fontFamily } from '../theme/typography';
 
 function DemoBadgeComponent() {
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    opacity.value = withRepeat(
-      withSequence(withTiming(0.4, { duration: 900 }), withTiming(1, { duration: 900 })),
-      -1,
-      false,
-    );
-  }, [opacity]);
-
-  const dotStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
-
   return (
     <View style={styles.badge}>
-      <Animated.View style={[styles.dot, dotStyle]} />
+      <View style={styles.dot} />
       <Text style={styles.text}>Демо-режим</Text>
     </View>
   );
@@ -50,9 +37,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(16, 185, 129, 0.1)',
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.25)',
-    ...Platform.select({
-      web: { backdropFilter: 'blur(12px)' } as object,
-    }),
   },
   dot: {
     width: 7,

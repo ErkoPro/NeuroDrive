@@ -1,8 +1,6 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
-import { useEffect } from 'react';
 import { colors } from '../theme/colors';
 import { fontFamily, typography } from '../theme/typography';
 
@@ -15,33 +13,17 @@ interface MetricCardProps {
   pulse?: boolean;
 }
 
-function MetricCardComponent({ icon: Icon, label, value, unit, color = colors.accentBlue, pulse = false }: MetricCardProps) {
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    if (pulse) {
-      scale.value = withRepeat(
-        withSequence(withTiming(1.04, { duration: 600 }), withTiming(1, { duration: 600 })),
-        -1,
-        false,
-      );
-    }
-  }, [pulse, scale]);
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
+function MetricCardComponent({ icon: Icon, label, value, unit, color = colors.accentBlue }: MetricCardProps) {
   return (
     <View style={[styles.card, { borderLeftColor: color }]}>
       <View style={[styles.iconWrap, { backgroundColor: `${color}18` }]}>
         <Icon size={16} color={color} strokeWidth={2.5} />
       </View>
       <Text style={styles.label}>{label}</Text>
-      <Animated.View style={[styles.valueRow, pulse && pulseStyle]}>
+      <View style={styles.valueRow}>
         <Text style={styles.value}>{value}</Text>
         {unit ? <Text style={styles.unit}>{unit}</Text> : null}
-      </Animated.View>
+      </View>
     </View>
   );
 }
@@ -58,9 +40,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderLeftWidth: 3,
     minWidth: '45%',
-    ...Platform.select({
-      web: { cursor: 'default' } as object,
-    }),
   },
   iconWrap: {
     width: 36,

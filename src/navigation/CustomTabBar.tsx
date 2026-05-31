@@ -3,9 +3,7 @@ import { View, Text, StyleSheet, Platform, Pressable } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, Car, BarChart3, Clock, User } from 'lucide-react-native';
-import MaskedView from '@react-native-masked-view/masked-view';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, gradients } from '../theme/colors';
+import { colors } from '../theme/colors';
 import { fontFamily } from '../theme/typography';
 
 const TAB_CONFIG: Record<string, { label: string; Icon: typeof Home }> = {
@@ -16,23 +14,7 @@ const TAB_CONFIG: Record<string, { label: string; Icon: typeof Home }> = {
   Profile: { label: 'Профиль', Icon: User },
 };
 
-function TabLabel({ label, focused }: { label: string; focused: boolean }) {
-  if (!focused) {
-    return <Text style={styles.labelInactive}>{label}</Text>;
-  }
-  if (Platform.OS === 'web') {
-    return <Text style={styles.labelActiveWeb}>{label}</Text>;
-  }
-  return (
-    <MaskedView maskElement={<Text style={styles.labelActive}>{label}</Text>}>
-      <LinearGradient colors={[...gradients.accent]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-        <Text style={[styles.labelActive, { opacity: 0 }]}>{label}</Text>
-      </LinearGradient>
-    </MaskedView>
-  );
-}
-
-function CustomTabBarComponent({ state, descriptors, navigation }: BottomTabBarProps) {
+function CustomTabBarComponent({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -51,12 +33,8 @@ function CustomTabBarComponent({ state, descriptors, navigation }: BottomTabBarP
               style={[styles.tab, focused && styles.tabActive]}
             >
               {focused && <View style={styles.glowDot} />}
-              <Icon
-                size={22}
-                color={focused ? colors.accentCyan : colors.textSecondary}
-                strokeWidth={focused ? 2.5 : 2}
-              />
-              <TabLabel label={label} focused={focused} />
+              <Icon size={22} color={focused ? colors.accentCyan : colors.textSecondary} strokeWidth={focused ? 2.5 : 2} />
+              <Text style={focused ? styles.labelActive : styles.labelInactive}>{label}</Text>
             </Pressable>
           );
         })}
@@ -72,9 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tabBar,
     borderTopWidth: 1,
     borderTopColor: colors.tabBarBorder,
-    ...Platform.select({
-      web: { backdropFilter: 'blur(30px)' } as object,
-    }),
+    ...Platform.select({ web: { backdropFilter: 'blur(30px)' } as object }),
   },
   inner: {
     flexDirection: 'row',
@@ -91,9 +67,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
   },
-  tabActive: {
-    backgroundColor: colors.accentGlow,
-  },
+  tabActive: { backgroundColor: colors.accentGlow },
   glowDot: {
     position: 'absolute',
     top: 4,
@@ -101,23 +75,7 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: colors.accentCyan,
-    shadowColor: colors.accentCyan,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 6,
   },
-  labelInactive: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontFamily: fontFamily.medium,
-  },
-  labelActive: {
-    fontSize: 11,
-    fontFamily: fontFamily.semiBold,
-  },
-  labelActiveWeb: {
-    fontSize: 11,
-    fontFamily: fontFamily.semiBold,
-    color: colors.accentCyan,
-  },
+  labelInactive: { color: colors.textSecondary, fontSize: 11, fontFamily: fontFamily.medium },
+  labelActive: { color: colors.accentCyan, fontSize: 11, fontFamily: fontFamily.semiBold },
 });

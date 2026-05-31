@@ -13,7 +13,7 @@ interface TrendChartProps {
 }
 
 function TrendChartComponent({ title, data, color = colors.accentBlue, unit = '' }: TrendChartProps) {
-  const chartWidth = Dimensions.get('window').width - 80;
+  const chartWidth = Math.min(Dimensions.get('window').width - 80, 400);
   const values = data.map((d) => d.value);
   const minVal = Math.min(...values);
   const maxVal = Math.max(...values);
@@ -27,7 +27,7 @@ function TrendChartComponent({ title, data, color = colors.accentBlue, unit = ''
         width={chartWidth}
         height={160}
         curved
-        isAnimated
+        isAnimated={false}
         color={color}
         thickness={2.5}
         startFillColor={`${color}40`}
@@ -37,8 +37,12 @@ function TrendChartComponent({ title, data, color = colors.accentBlue, unit = ''
         hideYAxisText
         yAxisColor="transparent"
         xAxisColor={colors.border}
+        xAxisLabelTextStyle={styles.axisLabel}
         dataPointsColor={color}
+        dataPointsRadius={4}
         spacing={(chartWidth - 40) / Math.max(data.length - 1, 1)}
+        initialSpacing={16}
+        endSpacing={16}
         maxValue={maxVal + padding}
         yAxisOffset={minVal - padding}
       />
@@ -55,5 +59,9 @@ const styles = StyleSheet.create({
     fontSize: typography.h3.fontSize,
     fontFamily: fontFamily.semiBold,
     marginBottom: 12,
+  },
+  axisLabel: {
+    color: colors.textMuted,
+    fontSize: 11,
   },
 });
