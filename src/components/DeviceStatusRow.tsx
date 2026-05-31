@@ -1,75 +1,97 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { memo } from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { LucideIcon } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
 import { colors } from '../theme/colors';
+import { fontFamily, typography } from '../theme/typography';
 
 interface DeviceStatusRowProps {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: LucideIcon;
   label: string;
   connected: boolean;
   connectedLabel?: string;
 }
 
-export function DeviceStatusRow({ icon, label, connected, connectedLabel = 'Подключено' }: DeviceStatusRowProps) {
+function DeviceStatusRowComponent({ icon: Icon, label, connected, connectedLabel = 'Подключено' }: DeviceStatusRowProps) {
   return (
     <View style={styles.row}>
       <View style={styles.left}>
+        <View style={[styles.dot, connected && styles.dotConnected]} />
         <View style={[styles.iconWrap, connected && styles.iconConnected]}>
-          <Ionicons name={icon} size={18} color={connected ? colors.safe : colors.textMuted} />
+          <Icon size={18} color={connected ? colors.green : colors.textMuted} strokeWidth={2} />
         </View>
         <Text style={styles.label}>{label}</Text>
       </View>
-      <View style={styles.right}>
-        <Ionicons
-          name={connected ? 'checkmark-circle' : 'close-circle'}
-          size={20}
-          color={connected ? colors.safe : colors.danger}
-        />
-        <Text style={[styles.status, { color: connected ? colors.safe : colors.danger }]}>
-          {connected ? connectedLabel : 'Отключено'}
-        </Text>
-      </View>
+      {connected ? (
+        <View style={styles.badge}>
+          <Check size={12} color={colors.green} strokeWidth={3} />
+          <Text style={styles.badgeText}>{connectedLabel}</Text>
+        </View>
+      ) : (
+        <Text style={styles.disconnected}>Отключено</Text>
+      )}
     </View>
   );
 }
+
+export const DeviceStatusRow = memo(DeviceStatusRowComponent);
 
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceBorder,
+    borderBottomColor: colors.border,
   },
   left: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.textMuted,
+  },
+  dotConnected: {
+    backgroundColor: colors.green,
   },
   iconWrap: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.bgSecondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconConnected: {
-    backgroundColor: `${colors.safe}20`,
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
   },
   label: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: '500',
+    color: colors.textPrimary,
+    fontSize: typography.body.fontSize,
+    fontFamily: fontFamily.semiBold,
   },
-  right: {
+  badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
   },
-  status: {
-    fontSize: 13,
-    fontWeight: '600',
+  badgeText: {
+    color: colors.green,
+    fontSize: 11,
+    fontFamily: fontFamily.semiBold,
+  },
+  disconnected: {
+    color: colors.red,
+    fontSize: 12,
+    fontFamily: fontFamily.medium,
   },
 });

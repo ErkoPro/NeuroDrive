@@ -1,50 +1,40 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Sparkles, Lightbulb, AlertCircle, Info } from 'lucide-react-native';
 import { GlassCard } from './GlassCard';
 import { colors } from '../theme/colors';
 import { AICoachMessage } from '../types';
+import { fontFamily, typography } from '../theme/typography';
 
 interface AICoachCardProps {
   messages: AICoachMessage[];
 }
 
-function getPriorityColor(priority: AICoachMessage['priority']) {
+function getIcon(priority: AICoachMessage['priority']) {
   switch (priority) {
     case 'warning':
-      return colors.warning;
+      return AlertCircle;
     case 'tip':
-      return colors.primary;
+      return Lightbulb;
     default:
-      return colors.accentLight;
+      return Info;
   }
 }
 
-function getPriorityIcon(priority: AICoachMessage['priority']): keyof typeof Ionicons.glyphMap {
-  switch (priority) {
-    case 'warning':
-      return 'alert-circle-outline';
-    case 'tip':
-      return 'bulb-outline';
-    default:
-      return 'information-circle-outline';
-  }
-}
-
-export function AICoachCard({ messages }: AICoachCardProps) {
+function AICoachCardComponent({ messages }: AICoachCardProps) {
   return (
-    <GlassCard accent={colors.primary}>
+    <GlassCard variant="gradient-border">
       <View style={styles.header}>
         <View style={styles.iconWrap}>
-          <Ionicons name="sparkles" size={22} color={colors.primary} />
+          <Sparkles size={20} color={colors.accentCyan} strokeWidth={2} />
         </View>
         <Text style={styles.title}>AI Coach</Text>
       </View>
       {messages.map((msg, i) => {
-        const color = getPriorityColor(msg.priority);
+        const Icon = getIcon(msg.priority);
         return (
           <View key={msg.id} style={[styles.message, i > 0 && styles.messageBorder]}>
-            <Ionicons name={getPriorityIcon(msg.priority)} size={18} color={color} />
+            <Icon size={16} color={colors.accentCyan} strokeWidth={2} />
             <Text style={styles.messageText}>{msg.message}</Text>
           </View>
         );
@@ -52,6 +42,8 @@ export function AICoachCard({ messages }: AICoachCardProps) {
     </GlassCard>
   );
 }
+
+export const AICoachCard = memo(AICoachCardComponent);
 
 const styles = StyleSheet.create({
   header: {
@@ -64,14 +56,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: `${colors.primary}20`,
+    backgroundColor: colors.accentGlow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.h2.fontSize,
+    fontFamily: fontFamily.bold,
   },
   message: {
     flexDirection: 'row',
@@ -81,12 +73,13 @@ const styles = StyleSheet.create({
   },
   messageBorder: {
     borderTopWidth: 1,
-    borderTopColor: colors.surfaceBorder,
+    borderTopColor: colors.border,
   },
   messageText: {
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 14,
+    fontSize: typography.body.fontSize,
+    fontFamily: fontFamily.regular,
     lineHeight: 20,
   },
 });

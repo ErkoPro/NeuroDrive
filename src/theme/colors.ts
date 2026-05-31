@@ -1,35 +1,59 @@
 export const colors = {
-  background: '#0A0E17',
-  backgroundSecondary: '#111827',
-  surface: 'rgba(255, 255, 255, 0.06)',
-  surfaceBorder: 'rgba(255, 255, 255, 0.1)',
-  glass: 'rgba(255, 255, 255, 0.08)',
-  glassBorder: 'rgba(255, 255, 255, 0.12)',
+  bgPrimary: '#050810',
+  bgSecondary: '#0A0F1E',
+  bgCard: '#0D1526',
+  bgCardHover: '#111D35',
 
-  primary: '#00D4FF',
-  primaryDark: '#0099CC',
-  accent: '#3B82F6',
-  accentLight: '#60A5FA',
+  accentBlue: '#0EA5E9',
+  accentCyan: '#06B6D4',
+  accentGlow: 'rgba(14, 165, 233, 0.15)',
 
-  safe: '#22C55E',
-  safeGlow: 'rgba(34, 197, 94, 0.3)',
-  warning: '#EAB308',
-  warningGlow: 'rgba(234, 179, 8, 0.3)',
+  green: '#10B981',
+  yellow: '#F59E0B',
+  red: '#EF4444',
+
+  textPrimary: '#F0F4FF',
+  textSecondary: '#8B9CC8',
+  textMuted: '#6B7FA8',
+
+  border: 'rgba(255,255,255,0.06)',
+  borderAccent: 'rgba(14, 165, 233, 0.3)',
+
+  // Legacy aliases
+  background: '#050810',
+  backgroundSecondary: '#0A0F1E',
+  surface: '#0D1526',
+  surfaceBorder: 'rgba(255,255,255,0.06)',
+  glass: '#0D1526',
+  glassBorder: 'rgba(255,255,255,0.06)',
+
+  primary: '#0EA5E9',
+  primaryDark: '#0284C7',
+  accent: '#06B6D4',
+  accentLight: '#22D3EE',
+
+  safe: '#10B981',
+  safeGlow: 'rgba(16, 185, 129, 0.3)',
+  warning: '#F59E0B',
+  warningGlow: 'rgba(245, 158, 11, 0.3)',
   danger: '#EF4444',
   dangerGlow: 'rgba(239, 68, 68, 0.3)',
 
-  text: '#F8FAFC',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
+  text: '#F0F4FF',
+  tabBar: 'rgba(5, 8, 16, 0.95)',
+  tabBarBorder: 'rgba(255,255,255,0.06)',
+};
 
-  tabBar: 'rgba(10, 14, 23, 0.95)',
-  tabBarBorder: 'rgba(255, 255, 255, 0.08)',
+export const gradients = {
+  accent: ['#0EA5E9', '#06B6D4'] as const,
+  accentSoft: ['rgba(6,182,212,0.08)', 'rgba(14,165,233,0.04)'] as const,
+  scoreRing: ['#0EA5E9', '#06B6D4'] as const,
 };
 
 export function getScoreColor(score: number): string {
-  if (score >= 80) return colors.safe;
-  if (score >= 50) return colors.warning;
-  return colors.danger;
+  if (score >= 80) return colors.green;
+  if (score >= 50) return colors.yellow;
+  return colors.red;
 }
 
 export function getScoreLabel(score: number): string {
@@ -53,4 +77,9 @@ export function getRiskLabel(level: 'low' | 'medium' | 'high'): string {
     case 'high':
       return 'Высокий';
   }
+}
+
+export function getScoreGlow(score: number): string {
+  const c = getScoreColor(score);
+  return `${c}40`;
 }

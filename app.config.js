@@ -6,6 +6,7 @@ export default {
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'dark',
+    plugins: ['expo-font'],
     ios: {
       supportsTablet: true,
     },
@@ -24,8 +25,8 @@ export default {
       name: 'NeuroDrive',
       shortName: 'NeuroDrive',
       description: 'AI-powered driver safety ecosystem',
-      themeColor: '#0A0E17',
-      backgroundColor: '#0A0E17',
+      themeColor: '#050810',
+      backgroundColor: '#050810',
     },
   },
 };

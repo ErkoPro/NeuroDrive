@@ -1,13 +1,13 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNeuroDrive } from '../context/NeuroDriveContext';
+import { useNeuroDrive } from '../hooks/useNeuroDrive';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { TripCard } from '../components/TripCard';
 import { DemoBadge } from '../components/DemoBadge';
-import { colors } from '../theme/colors';
+import { FadeInView } from '../components/animations/FadeInView';
 import { RootStackParamList } from '../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -18,22 +18,15 @@ export function HistoryScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.topRow}>
           <ScreenHeader title="История" subtitle={`${tripHistory.length} поездок`} />
           <DemoBadge />
         </View>
-
-        {tripHistory.map((trip) => (
-          <TripCard
-            key={trip.id}
-            trip={trip}
-            onPress={() => navigation.navigate('TripReport', { tripId: trip.id })}
-          />
+        {tripHistory.map((trip, i) => (
+          <FadeInView key={trip.id} delay={i * 50}>
+            <TripCard trip={trip} onPress={() => navigation.navigate('TripReport', { tripId: trip.id })} />
+          </FadeInView>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -41,20 +34,8 @@ export function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 32,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
+  safe: { flex: 1, backgroundColor: 'transparent' },
+  scroll: { flex: 1 },
+  content: { padding: 20, paddingBottom: 32 },
+  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
 });

@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import Animated, {
   useSharedValue,
   useAnimatedProps,
+  useAnimatedStyle,
   withTiming,
+  withRepeat,
   Easing,
 } from 'react-native-reanimated';
-import { colors, getScoreColor, getScoreLabel } from '../theme/colors';
+import { colors, getScoreColor, getScoreLabel, gradients } from '../theme/colors';
+import { fontFamily, typography } from '../theme/typography';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -17,46 +20,62 @@ interface SafetyScoreRingProps {
   label?: string;
 }
 
-export function SafetyScoreRing({ score, size = 220, label = 'NeuroScore' }: SafetyScoreRingProps) {
-  const strokeWidth = 14;
+function SafetyScoreRingComponent({ score, size = 200, label = 'SAFETY SCORE' }: SafetyScoreRingProps) {
+  const strokeWidth = 12;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const scoreColor = getScoreColor(score);
   const progress = useSharedValue(0);
+  const rotation = useSharedValue(0);
+  const [shownScore, setShownScore] = useState(0);
 
   useEffect(() => {
-    progress.value = withTiming(score / 100, {
-      duration: 1400,
-      easing: Easing.out(Easing.cubic),
-    });
-  }, [score, progress]);
+    progress.value = withTiming(score / 100, { duration: 1400, easing: Easing.out(Easing.cubic) });
+    rotation.value = withRepeat(withTiming(360, { duration: 20000, easing: Easing.linear }), -1, false);
+
+    let start = 0;
+    const step = score / 60;
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= score) {
+        setShownScore(score);
+        clearInterval(interval);
+      } else {
+        setShownScore(Math.round(start));
+      }
+    }, 23);
+    return () => clearInterval(interval);
+  }, [score, progress, rotation]);
 
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: circumference * (1 - progress.value),
   }));
 
+  const ringStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
   return (
     <View style={[styles.container, { width: size, height: size }]}>
-      <Svg width={size} height={size}>
+      <View style={[styles.glow, { shadowColor: scoreColor, width: size, height: size, borderRadius: size / 2 }]} />
+      <Animated.View style={[styles.ringWrap, { width: size, height: size }, ringStyle]}>
+        <Svg width={size} height={size}>
+          <Circle cx={size / 2} cy={size / 2} r={radius} stroke="rgba(14,165,233,0.15)" strokeWidth={2} fill="none" />
+        </Svg>
+      </Animated.View>
+      <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
         <Defs>
-          <SvgGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor={scoreColor} stopOpacity="1" />
-            <Stop offset="1" stopColor={colors.primary} stopOpacity="0.8" />
+          <SvgGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor={gradients.scoreRing[0]} />
+            <Stop offset="1" stopColor={gradients.scoreRing[1]} />
           </SvgGradient>
         </Defs>
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="rgba(255,255,255,0.08)"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
+        <Circle cx={size / 2} cy={size / 2} r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth={strokeWidth} fill="none" />
         <AnimatedCircle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="url(#scoreGrad)"
+          stroke="url(#ringGrad)"
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={circumference}
@@ -66,40 +85,55 @@ export function SafetyScoreRing({ score, size = 220, label = 'NeuroScore' }: Saf
           animatedProps={animatedProps}
         />
       </Svg>
-      <View style={styles.center}>
+      <View style={[styles.inner, { width: size - 40, height: size - 40, borderRadius: (size - 40) / 2 }]}>
         <Text style={styles.label}>{label}</Text>
-        <Text style={[styles.score, { color: scoreColor }]}>{score}</Text>
+        <Text style={[styles.score, { color: scoreColor }]}>{shownScore}</Text>
         <Text style={[styles.status, { color: scoreColor }]}>{getScoreLabel(score)}</Text>
       </View>
     </View>
   );
 }
 
+export const SafetyScoreRing = memo(SafetyScoreRingComponent);
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  center: {
+  glow: {
     position: 'absolute',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  ringWrap: {
+    position: 'absolute',
+    opacity: 0.4,
+  },
+  inner: {
+    position: 'absolute',
+    backgroundColor: colors.bgSecondary,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
     color: colors.textSecondary,
-    fontSize: 13,
-    fontWeight: '500',
-    letterSpacing: 1,
+    fontSize: 11,
+    fontFamily: fontFamily.medium,
+    letterSpacing: 2,
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   score: {
-    fontSize: 56,
-    fontWeight: '700',
-    letterSpacing: -2,
+    fontSize: typography.score.fontSize,
+    fontFamily: fontFamily.bold,
+    letterSpacing: -3,
   },
   status: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: typography.caption.fontSize,
+    fontFamily: fontFamily.semiBold,
     marginTop: 2,
   },
 });

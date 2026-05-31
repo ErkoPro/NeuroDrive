@@ -1,37 +1,41 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { memo, useEffect } from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Cpu } from 'lucide-react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { colors } from '../theme/colors';
+import { fontFamily } from '../theme/typography';
 
-export function DemoBadge() {
+function DemoBadgeComponent() {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(withTiming(0.4, { duration: 900 }), withTiming(1, { duration: 900 })),
+      -1,
+      false,
+    );
+  }, [opacity]);
+
+  const dotStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
   return (
-    <LinearGradient
-      colors={[`${colors.primary}30`, `${colors.accent}15`]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.badge}
-    >
-      <Ionicons name="flask" size={12} color={colors.primary} />
-      <View style={styles.dot} />
+    <View style={styles.badge}>
+      <Animated.View style={[styles.dot, dotStyle]} />
       <Text style={styles.text}>Демо-режим</Text>
-    </LinearGradient>
+    </View>
   );
 }
 
+export const DemoBadge = memo(DemoBadgeComponent);
+
 export function DemoModeBanner() {
   return (
-    <LinearGradient
-      colors={[`${colors.primary}25`, `${colors.accent}10`]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.banner}
-    >
-      <Ionicons name="hardware-chip-outline" size={16} color={colors.primary} />
+    <View style={styles.banner}>
+      <Cpu size={16} color={colors.accentCyan} strokeWidth={2} />
       <Text style={styles.bannerText}>
         Демонстрация без оборудования — данные симулируются в реальном времени
       </Text>
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -39,39 +43,45 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
     borderWidth: 1,
-    borderColor: `${colors.primary}40`,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+    ...Platform.select({
+      web: { backdropFilter: 'blur(12px)' } as object,
+    }),
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.primary,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.green,
   },
   text: {
-    color: colors.primary,
+    color: colors.green,
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: fontFamily.semiBold,
   },
   banner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: colors.bgCard,
     borderWidth: 1,
-    borderColor: `${colors.primary}25`,
+    borderColor: colors.border,
     marginBottom: 16,
   },
   bannerText: {
     flex: 1,
     color: colors.textSecondary,
     fontSize: 12,
+    fontFamily: fontFamily.regular,
     lineHeight: 16,
   },
 });
